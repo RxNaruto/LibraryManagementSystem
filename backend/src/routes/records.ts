@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { PrismaClient } from '@prisma/client'
+import { addRecordTypes } from "../types/record";
 const recordsRouter = Router();
 const prisma = new PrismaClient()
 
@@ -9,11 +10,28 @@ interface addRecord {
 }
 recordsRouter.post("/addrecord", async (req, res) => {
     const body: addRecord = req.body;
+    const {success} = addRecordTypes.safeParse(body);
+    if(!success){
+        return res.status(403).json({
+            message: "Incorrect inputs"
+        })
+    }
     const currentDate = new Date();
     const endDate = new Date(currentDate);
     endDate.setDate(endDate.getDate()+7);
 
     try {
+        const findRecord = await prisma.records.findFirst({
+            where:{
+                userId: body.userId,
+                bookId: body.bookId
+            }
+        })
+        if(findRecord){
+            return res.status(200).json({
+                message: "Book already issued"
+            })
+        }
         const newRecord = await prisma.records.create({
             data: {
                 userId: body.userId,
@@ -24,7 +42,7 @@ recordsRouter.post("/addrecord", async (req, res) => {
         })
         if (newRecord) {
             res.status(200).json({
-                message: "Book added",
+                message: "record Added",
                 id: newRecord.id
             })
         }

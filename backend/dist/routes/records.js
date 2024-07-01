@@ -11,14 +11,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const client_1 = require("@prisma/client");
+const record_1 = require("../types/record");
 const recordsRouter = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
 recordsRouter.post("/addrecord", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
+    const { success } = record_1.addRecordTypes.safeParse(body);
+    if (!success) {
+        return res.status(403).json({
+            message: "Incorrect inputs"
+        });
+    }
     const currentDate = new Date();
     const endDate = new Date(currentDate);
     endDate.setDate(endDate.getDate() + 7);
     try {
+        const findRecord = yield prisma.records.findFirst({
+            where: {
+                userId: body.userId,
+                bookId: body.bookId
+            }
+        });
+        if (findRecord) {
+            return res.status(200).json({
+                message: "Book already issued"
+            });
+        }
         const newRecord = yield prisma.records.create({
             data: {
                 userId: body.userId,
@@ -29,7 +47,7 @@ recordsRouter.post("/addrecord", (req, res) => __awaiter(void 0, void 0, void 0,
         });
         if (newRecord) {
             res.status(200).json({
-                message: "Book added",
+                message: "record Added",
                 id: newRecord.id
             });
         }

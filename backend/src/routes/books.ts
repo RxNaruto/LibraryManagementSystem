@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { PrismaClient } from '@prisma/client'
+import { addBookTypes } from "../types/books";
 const booksRouter = Router();
 const prisma = new PrismaClient()
 
@@ -9,6 +10,12 @@ interface addBook{
 }
 booksRouter.post("/addbook",async(req,res)=>{
     const body: addBook = req.body;
+    const {success} = addBookTypes.safeParse(body);
+    if(!success){
+        return res.status(403).json({
+            message: "Incorrect inputs"
+        })
+    }
     try {
         const newBook = await prisma.books.create({
             data:{
@@ -16,17 +23,13 @@ booksRouter.post("/addbook",async(req,res)=>{
                 authorName: body.authorName
             }
         })
-        if(newBook){
+       
             res.status(200).json({
                 message: "Book added",
                 id: newBook.id
             })
-        }
-        else{
-            res.status(404).json({
-                message: "service not available"
-            })
-        }
+        
+        
     } catch (error) {
         res.status(500).json({
             message: "internal server error"
