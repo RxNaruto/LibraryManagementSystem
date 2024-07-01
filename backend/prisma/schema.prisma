@@ -25,6 +25,7 @@ model Books{
   id Int @id@default(autoincrement())
   name String 
   authorName String
+  available Boolean @default(true)
   record records[]
 
 }

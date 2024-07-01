@@ -45,4 +45,43 @@ recordsRouter.post("/addrecord", (req, res) => __awaiter(void 0, void 0, void 0,
         });
     }
 }));
+recordsRouter.get("/log/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const bookId = req.params.id;
+    try {
+        const log = yield prisma.records.findFirst({
+            where: {
+                bookId: Number(bookId)
+            },
+            select: {
+                user: {
+                    select: {
+                        name: true
+                    }
+                },
+                book: {
+                    select: {
+                        name: true
+                    }
+                },
+                startDate: true,
+                endDate: true
+            }
+        });
+        if (log) {
+            res.status(200).json({
+                record: log
+            });
+        }
+        else {
+            res.status(400).json({
+                message: "no log found"
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Internal Server error"
+        });
+    }
+}));
 exports.default = recordsRouter;

@@ -40,4 +40,62 @@ booksRouter.post("/addbook", (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
 }));
+booksRouter.delete("/delete/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    try {
+        const book = yield prisma.books.update({
+            where: {
+                id: Number(id)
+            },
+            data: {
+                available: false
+            }
+        });
+        if (book) {
+            res.status(200).json({
+                message: "Book deleted successfully"
+            });
+        }
+        else {
+            res.status(400).json({
+                message: "error"
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(404).json({
+            message: "Internal server error"
+        });
+    }
+}));
+booksRouter.put("/restore/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    try {
+        const book = yield prisma.books.update({
+            where: {
+                id: Number(id)
+            },
+            data: {
+                available: true
+            }
+        });
+        if (book) {
+            res.status(200).json({
+                message: "Book added successfully"
+            });
+        }
+        else {
+            res.status(400).json({
+                message: "error"
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(404).json({
+            message: "Internal server error"
+        });
+    }
+}));
 exports.default = booksRouter;

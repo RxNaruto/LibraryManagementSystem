@@ -1,8 +1,5 @@
 import { Router } from "express";
 import { PrismaClient } from '@prisma/client'
-import { signupTypes, loginTypes } from "../types/user";
-import jwt from "jsonwebtoken"
-import { JWT_SECRET } from "../config";
 const recordsRouter = Router();
 const prisma = new PrismaClient()
 
@@ -41,6 +38,46 @@ recordsRouter.post("/addrecord", async (req, res) => {
             message: "internal server error"
         })
 
+    }
+})
+recordsRouter.get("/log/:id",async(req,res)=>{
+    const bookId = req.params.id;
+    try {
+        const log = await prisma.records.findFirst({
+            where:{
+                bookId: Number(bookId)
+            },
+            select: {
+                user: {
+                    select:{
+                        name: true
+                      }
+                },
+                book: {
+                    select:{
+                        name: true
+                      }
+                },
+                startDate:true,
+                endDate:true
+            }
+    
+        })
+        if(log){
+            res.status(200).json({
+                record: log
+            })
+        }
+        else{
+            res.status(400).json({
+                message: "no log found"
+            })
+        }
+    } catch (error) {
+        
+       res.status(500).json({
+        message: "Internal Server error"
+       })
     }
 })
 
