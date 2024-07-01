@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { PrismaClient } from '@prisma/client'
 import { addRecordTypes } from "../types/record";
+import { userAuth } from "../middlewares/userAuth";
 const recordsRouter = Router();
 const prisma = new PrismaClient()
 
@@ -8,7 +9,7 @@ interface addRecord {
     userId: number;
     bookId: number;
 }
-recordsRouter.post("/addrecord", async (req, res) => {
+recordsRouter.post("/addrecord", userAuth, async (req, res) => {
     const body: addRecord = req.body;
     const {success} = addRecordTypes.safeParse(body);
     if(!success){
@@ -58,7 +59,7 @@ recordsRouter.post("/addrecord", async (req, res) => {
 
     }
 })
-recordsRouter.get("/log/:id",async(req,res)=>{
+recordsRouter.get("/log/:id",userAuth, async(req,res)=>{
     const bookId = req.params.id;
     try {
         const log = await prisma.records.findFirst({

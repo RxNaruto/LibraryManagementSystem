@@ -46,7 +46,7 @@ adminRouter.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, func
             }
         });
         if (newUser) {
-            const token = jsonwebtoken_1.default.sign({ userId: newUser.id }, config_1.JWT_SECRET);
+            const token = jsonwebtoken_1.default.sign({ userId: newUser.id }, config_1.JWT_SECRET2);
             res.status(200).json({
                 message: "Signup complete",
                 token: token
@@ -81,7 +81,7 @@ adminRouter.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, funct
             }
         });
         if (user) {
-            const token = jsonwebtoken_1.default.sign({ userId: user.id }, config_1.JWT_SECRET);
+            const token = jsonwebtoken_1.default.sign({ userId: user.id }, config_1.JWT_SECRET2);
             res.status(200).json({
                 message: "Signin complete",
                 token: token

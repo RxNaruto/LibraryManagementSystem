@@ -12,9 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const client_1 = require("@prisma/client");
 const books_1 = require("../types/books");
+const userAuth_1 = require("../middlewares/userAuth");
 const booksRouter = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
-booksRouter.post("/addbook", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+booksRouter.post("/addbook", userAuth_1.userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const { success } = books_1.addBookTypes.safeParse(body);
     if (!success) {
@@ -40,7 +41,7 @@ booksRouter.post("/addbook", (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
 }));
-booksRouter.delete("/delete/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+booksRouter.delete("/delete/:id", userAuth_1.userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     try {
         const book = yield prisma.books.update({
@@ -69,7 +70,7 @@ booksRouter.delete("/delete/:id", (req, res) => __awaiter(void 0, void 0, void 0
         });
     }
 }));
-booksRouter.put("/restore/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+booksRouter.put("/restore/:id", userAuth_1.userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     try {
         const book = yield prisma.books.update({

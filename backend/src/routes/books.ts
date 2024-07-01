@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { PrismaClient } from '@prisma/client'
 import { addBookTypes } from "../types/books";
+import { userAuth } from "../middlewares/userAuth";
+
 const booksRouter = Router();
 const prisma = new PrismaClient()
 
@@ -8,7 +10,7 @@ interface addBook{
     name: string;
     authorName: string;
 }
-booksRouter.post("/addbook",async(req,res)=>{
+booksRouter.post("/addbook",userAuth, async(req,res)=>{
     const body: addBook = req.body;
     const {success} = addBookTypes.safeParse(body);
     if(!success){
@@ -38,7 +40,7 @@ booksRouter.post("/addbook",async(req,res)=>{
     }
 })
 
-booksRouter.delete("/delete/:id", async (req, res) => {
+booksRouter.delete("/delete/:id", userAuth,async (req, res) => {
     const id = req.params.id ;
     try {
         const book = await prisma.books.update({
@@ -69,7 +71,7 @@ booksRouter.delete("/delete/:id", async (req, res) => {
     }
 })
 
-booksRouter.put("/restore/:id", async (req, res) => {
+booksRouter.put("/restore/:id", userAuth, async (req, res) => {
     const id = req.params.id;
     try {
         const book = await prisma.books.update({

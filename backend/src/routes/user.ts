@@ -2,7 +2,7 @@ import { Router } from "express";
 import { PrismaClient } from '@prisma/client'
 import { signupTypes,loginTypes } from "../types/user";
 import jwt from "jsonwebtoken"
-import { JWT_SECRET } from "../config";
+import { JWT_SECRET1 } from "../config";
 const userRouter = Router();
 const prisma = new PrismaClient()
 
@@ -41,7 +41,7 @@ userRouter.post("/signup",async(req,res)=>{
         })
         
         if(newUser){
-            const token = jwt.sign({userId: newUser.id},JWT_SECRET)
+            const token = jwt.sign({userId: newUser.id},JWT_SECRET1)
             res.status(200).json({
                 message: "Signup complete",
                 token: token
@@ -83,7 +83,7 @@ userRouter.post("/login",async(req,res)=>{
         })
        
         if(user){
-            const token = jwt.sign({userId: user.id},JWT_SECRET)
+            const token = jwt.sign({userId: user.id},JWT_SECRET1)
             res.status(200).json({
                 message: "Signin complete",
                 token: token

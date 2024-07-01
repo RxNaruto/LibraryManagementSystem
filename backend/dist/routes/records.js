@@ -12,9 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const client_1 = require("@prisma/client");
 const record_1 = require("../types/record");
+const userAuth_1 = require("../middlewares/userAuth");
 const recordsRouter = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
-recordsRouter.post("/addrecord", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+recordsRouter.post("/addrecord", userAuth_1.userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const { success } = record_1.addRecordTypes.safeParse(body);
     if (!success) {
@@ -63,7 +64,7 @@ recordsRouter.post("/addrecord", (req, res) => __awaiter(void 0, void 0, void 0,
         });
     }
 }));
-recordsRouter.get("/log/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+recordsRouter.get("/log/:id", userAuth_1.userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const bookId = req.params.id;
     try {
         const log = yield prisma.records.findFirst({
